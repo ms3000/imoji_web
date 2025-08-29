@@ -3,10 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imoji Web</title>
+    <title>🌟 Emoji Copy - 이모지 복사 웹사이트</title>
+    <meta name="description" content="쉽고 빠른 이모지 복사! 카테고리별 이모지 검색, 인기 이모지, 이모지 게임까지. 모든 이모지를 한 번의 클릭으로 복사하세요.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Emoji Copy">
+    
+    <!-- AdSense Integration -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1>Imoji Web</h1>
-    <p>안녕하세요! Imoji Web 페이지입니다.</p>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>🌟 Emoji Copy</h1>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="#home" data-lang="nav-home">홈</a></li>
+                    <li><a href="#categories" data-lang="nav-categories">카테고리</a></li>
+                    <li><a href="#popular" data-lang="nav-popular">인기</a></li>
+                    <li><a href="#kitchen" data-lang="nav-kitchen">이모지 메이커</a></li>
+                    <li><a href="#games" data-lang="nav-games">게임</a></li>
+                </ul>
+            </nav>
+            <div class="language-selector">
+                <select id="language-select">
+                    <option value="ko">한국어</option>
+                    <option value="en">English</option>
+                    <option value="zh-tw">繁體中文</option>
+                    <option value="zh-cn">简体中文</option>
+                    <option value="ja">日本語</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section id="home" class="hero">
+            <div class="container">
+                <h2 data-lang="hero-title">🎉 완벽한 이모지 복사 경험</h2>
+                <p data-lang="hero-subtitle">수천 개의 이모지를 쉽게 검색하고 한 번의 클릭으로 복사하세요!</p>
+                
+                <div class="search-container">
+                    <input type="text" id="emoji-search" placeholder="이모지 검색..." data-lang-placeholder="search-placeholder">
+                    <button id="search-btn" data-lang="search-btn">검색</button>
+                </div>
+
+                <div class="quick-access">
+                    <h3 data-lang="quick-access-title">빠른 접근</h3>
+                    <div class="quick-emojis" id="quick-emojis">
+                        <span class="emoji-item" data-emoji="😀">😀</span>
+                        <span class="emoji-item" data-emoji="😂">😂</span>
+                        <span class="emoji-item" data-emoji="❤️">❤️</span>
+                        <span class="emoji-item" data-emoji="👍">👍</span>
+                        <span class="emoji-item" data-emoji="🔥">🔥</span>
+                        <span class="emoji-item" data-emoji="💯">💯</span>
+                        <span class="emoji-item" data-emoji="🎉">🎉</span>
+                        <span class="emoji-item" data-emoji="✨">✨</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="ad-space">
+            <div class="container">
+                <!-- AdSense Display Ad -->
+                <ins class="adsbygoogle ad-placeholder"
+                     style="display:block"
+                     data-ad-client="ca-pub-XXXXXXXXXX"
+                     data-ad-slot="1234567890"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+
+        <section id="categories" class="categories">
+            <div class="container">
+                <h2 data-lang="categories-title">📂 카테고리별 이모지</h2>
+                <div class="category-grid" id="category-grid">
+                    <div class="category-card" data-category="faces">
+                        <div class="category-icon">😀</div>
+                        <h3 data-lang="cat-faces">얼굴 표정</h3>
+                        <p data-lang="cat-faces-desc">웃음, 슬픔, 놀람 등</p>
+                    </div>
+                    <div class="category-card" data-category="people">
+                        <div class="category-icon">👤</div>
+                        <h3 data-lang="cat-people">사람</h3>
+                        <p data-lang="cat-people-desc">제스처, 직업, 가족</p>
+                    </div>
+                    <div class="category-card" data-category="animals">
+                        <div class="category-icon">🐶</div>
+                        <h3 data-lang="cat-animals">동물</h3>
+                        <p data-lang="cat-animals-desc">포유류, 조류, 해양생물</p>
+                    </div>
+                    <div class="category-card" data-category="food">
+                        <div class="category-icon">🍕</div>
+                        <h3 data-lang="cat-food">음식</h3>
+                        <p data-lang="cat-food-desc">과일, 요리, 음료</p>
+                    </div>
+                    <div class="category-card" data-category="activities">
+                        <div class="category-icon">⚽</div>
+                        <h3 data-lang="cat-activities">활동</h3>
+                        <p data-lang="cat-activities-desc">스포츠, 취미, 게임</p>
+                    </div>
+                    <div class="category-card" data-category="travel">
+                        <div class="category-icon">✈️</div>
+                        <h3 data-lang="cat-travel">여행</h3>
+                        <p data-lang="cat-travel-desc">교통수단, 장소, 건물</p>
+                    </div>
+                    <div class="category-card" data-category="objects">
+                        <div class="category-icon">💎</div>
+                        <h3 data-lang="cat-objects">사물</h3>
+                        <p data-lang="cat-objects-desc">의류, 도구, 가전제품</p>
+                    </div>
+                    <div class="category-card" data-category="symbols">
+                        <div class="category-icon">🔥</div>
+                        <h3 data-lang="cat-symbols">기호</h3>
+                        <p data-lang="cat-symbols-desc">하트, 별, 화살표</p>
+                    </div>
+                    <div class="category-card" data-category="flags">
+                        <div class="category-icon">🏳️</div>
+                        <h3 data-lang="cat-flags">깃발</h3>
+                        <p data-lang="cat-flags-desc">국가별 깃발</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="popular" class="popular">
+            <div class="container">
+                <h2 data-lang="popular-title">🌟 인기 이모지</h2>
+                <div class="popular-tabs">
+                    <button class="tab-btn active" data-tab="trending" data-lang="tab-trending">트렌딩</button>
+                    <button class="tab-btn" data-tab="most-copied" data-lang="tab-most-copied">가장 많이 복사됨</button>
+                    <button class="tab-btn" data-tab="recent" data-lang="tab-recent">최근 사용</button>
+                </div>
+                <div class="emoji-grid" id="popular-emojis">
+                    <!-- Popular emojis will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <div class="ad-space">
+            <div class="container">
+                <!-- AdSense Display Ad -->
+                <ins class="adsbygoogle ad-placeholder"
+                     style="display:block"
+                     data-ad-client="ca-pub-XXXXXXXXXX"
+                     data-ad-slot="1234567890"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+
+        <section id="kitchen" class="kitchen">
+            <div class="container">
+                <h2 data-lang="kitchen-title">🍳 이모지 메이커</h2>
+                <p data-lang="kitchen-subtitle">두 개의 이모지를 조합해서 새로운 이모지를 만들어보세요!</p>
+                
+                <div class="kitchen-interface">
+                    <div class="emoji-selector">
+                        <div class="selector-box">
+                            <div class="selected-emoji" id="emoji1" data-emoji="">
+                                <span class="placeholder">+</span>
+                            </div>
+                            <p data-lang="select-first">첫 번째 이모지 선택</p>
+                        </div>
+                        <div class="plus-sign">➕</div>
+                        <div class="selector-box">
+                            <div class="selected-emoji" id="emoji2" data-emoji="">
+                                <span class="placeholder">+</span>
+                            </div>
+                            <p data-lang="select-second">두 번째 이모지 선택</p>
+                        </div>
+                        <div class="equals-sign">=</div>
+                        <div class="result-box">
+                            <div class="result-emoji" id="result-emoji">
+                                <span class="placeholder">?</span>
+                            </div>
+                            <button id="generate-btn" data-lang="generate-btn">생성</button>
+                        </div>
+                    </div>
+                    
+                    <div class="kitchen-emoji-grid" id="kitchen-emoji-grid">
+                        <!-- Kitchen emojis will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="games" class="games">
+            <div class="container">
+                <h2 data-lang="games-title">🎮 이모지 게임</h2>
+                <div class="games-grid">
+                    <div class="game-card" data-game="guess">
+                        <div class="game-icon">🤔</div>
+                        <h3 data-lang="game-guess-title">이모지 맞추기</h3>
+                        <p data-lang="game-guess-desc">이모지로 표현된 단어를 맞춰보세요!</p>
+                        <button class="play-btn" data-lang="play-btn">플레이</button>
+                    </div>
+                    <div class="game-card" data-game="memory">
+                        <div class="game-icon">🧠</div>
+                        <h3 data-lang="game-memory-title">이모지 기억하기</h3>
+                        <p data-lang="game-memory-desc">이모지 순서를 기억하고 따라해보세요!</p>
+                        <button class="play-btn" data-lang="play-btn">플레이</button>
+                    </div>
+                    <div class="game-card" data-game="story">
+                        <div class="game-icon">📚</div>
+                        <h3 data-lang="game-story-title">이모지 스토리</h3>
+                        <p data-lang="game-story-desc">이모지로 재미있는 스토리를 만들어보세요!</p>
+                        <button class="play-btn" data-lang="play-btn">플레이</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="gallery">
+            <div class="container">
+                <h2 data-lang="gallery-title">🖼️ 이모지 갤러리</h2>
+                <div class="gallery-tabs">
+                    <button class="gallery-tab-btn active" data-gallery-tab="combos" data-lang="gallery-combos">조합 이모지</button>
+                    <button class="gallery-tab-btn" data-gallery-tab="ascii" data-lang="gallery-ascii">ASCII 아트</button>
+                    <button class="gallery-tab-btn" data-gallery-tab="patterns" data-lang="gallery-patterns">이모지 패턴</button>
+                </div>
+                <div class="gallery-grid" id="gallery-grid">
+                    <!-- Gallery items will be populated here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-lang="footer-about">소개</h3>
+                    <p data-lang="footer-about-text">Emoji Copy는 최고의 이모지 복사 경험을 제공합니다.</p>
+                </div>
+                <div class="footer-section">
+                    <h3 data-lang="footer-features">기능</h3>
+                    <ul>
+                        <li data-lang="footer-search">이모지 검색</li>
+                        <li data-lang="footer-categories">카테고리별 분류</li>
+                        <li data-lang="footer-maker">이모지 메이커</li>
+                        <li data-lang="footer-games">재미있는 게임</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 data-lang="footer-contact">연락처</h3>
+                    <p data-lang="footer-contact-text">문의사항이 있으시면 언제든 연락주세요.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-lang="footer-copyright">&copy; 2024 Emoji Copy. 모든 권리 보유.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast">
+        <span id="toast-message" data-lang="copied-message">이모지가 복사되었습니다!</span>
+    </div>
+
+    <!-- Game modals -->
+    <div id="game-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="game-content">
+                <!-- Game content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="languages.js"></script>
+    <script src="games.js"></script>
 </body>
 </html>
