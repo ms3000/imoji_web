@@ -170,6 +170,26 @@ class EmojiCopyApp {
             this.generateCombinedEmoji();
         });
 
+        // Clear selection button
+        document.getElementById('clear-selection').addEventListener('click', () => {
+            this.clearKitchenSelection();
+        });
+
+        // Kitchen tabs
+        document.querySelectorAll('.kitchen-tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.switchKitchenTab(e.target.dataset.kitchenTab);
+            });
+        });
+
+        // Combo suggestions
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('combo-suggestion')) {
+                const [emoji1, emoji2] = e.target.dataset.combo.split(',');
+                this.loadCombination(emoji1, emoji2);
+            }
+        });
+
         // Game buttons
         document.querySelectorAll('.play-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -407,38 +427,261 @@ class EmojiCopyApp {
         }
     }
 
-    generateCombinedEmoji() {
+    async generateCombinedEmoji() {
         if (!this.selectedEmoji1 || !this.selectedEmoji2) {
             this.showToast('두 개의 이모지를 선택해주세요!');
             return;
         }
 
-        // Simple emoji combination logic
-        const combinations = {
-            '😀🔥': '🤩',
-            '❤️✨': '💖',
-            '🐶🎉': '🎊',
-            '🍕❤️': '😋',
-            '😎🔥': '😈',
-            '🌟💫': '✨',
-            '🎂🎉': '🥳',
-            '🐱❤️': '😻',
-            '🔥💯': '🚀',
-            '😂😭': '🤣'
-        };
+        // Show loading state
+        const resultElement = document.getElementById('result-emoji');
+        const generateBtn = document.getElementById('generate-btn');
+        
+        resultElement.innerHTML = '<div class="loading-spinner">⏳</div>';
+        generateBtn.disabled = true;
+        generateBtn.textContent = '생성 중...';
 
-        const key = this.selectedEmoji1 + this.selectedEmoji2;
-        const reverseKey = this.selectedEmoji2 + this.selectedEmoji1;
-        let result = combinations[key] || combinations[reverseKey];
+        try {
+            // Get Unicode codepoints for the emojis
+            const emoji1Code = this.getEmojiCodepoint(this.selectedEmoji1);
+            const emoji2Code = this.getEmojiCodepoint(this.selectedEmoji2);
+            
+            // Try to get combination from Google's Emoji Kitchen
+            const combination = await this.fetchEmojiCombination(emoji1Code, emoji2Code);
+            
+            if (combination) {
+                // Display the combination result
+                resultElement.innerHTML = `<img src="${combination.url}" alt="Combined emoji" class="combined-emoji-img">`;
+                this.showToast(`${this.selectedEmoji1} + ${this.selectedEmoji2} = 조합 완성! 🎉`);
+                
+                // Add to recent combinations
+                this.addToRecentCombinations(this.selectedEmoji1, this.selectedEmoji2, combination.url);
+            } else {
+                // Fallback to predefined combinations
+                this.generateFallbackCombination();
+            }
+        } catch (error) {
+            console.warn('Emoji combination failed, using fallback:', error);
+            this.generateFallbackCombination();
+        } finally {
+            generateBtn.disabled = false;
+            generateBtn.textContent = '생성';
+        }
+    }
 
-        if (!result) {
-            // Generate a random result from trending emojis
-            const trending = ['🔥', '💯', '✨', '🎉', '❤️', '😍', '🥳', '👏', '💪', '🙌'];
-            result = trending[Math.floor(Math.random() * trending.length)];
+    getEmojiCodepoint(emoji) {
+        // Convert emoji to Unicode codepoint
+        return Array.from(emoji).map(char => 
+            char.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')
+        ).join('-');
+    }
+
+    async fetchEmojiCombination(code1, code2) {
+        // Try multiple combination approaches
+        const attempts = [
+            `https://www.gstatic.com/android/keyboard/emojikitchen/20220203/u${code1.toLowerCase()}/u${code1.toLowerCase()}_u${code2.toLowerCase()}.png`,
+            `https://www.gstatic.com/android/keyboard/emojikitchen/20220203/u${code2.toLowerCase()}/u${code2.toLowerCase()}_u${code1.toLowerCase()}.png`,
+            `https://www.gstatic.com/android/keyboard/emojikitchen/20220406/u${code1.toLowerCase()}/u${code1.toLowerCase()}_u${code2.toLowerCase()}.png`,
+            `https://www.gstatic.com/android/keyboard/emojikitchen/20220406/u${code2.toLowerCase()}/u${code2.toLowerCase()}_u${code1.toLowerCase()}.png`
+        ];
+
+        for (const url of attempts) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                if (response.ok) {
+                    return { url, valid: true };
+                }
+            } catch (e) {
+                // Continue to next attempt
+            }
         }
 
-        document.getElementById('result-emoji').innerHTML = result;
-        this.copyEmoji(result);
+        return null;
+    }
+
+    generateFallbackCombination() {
+        // Enhanced fallback combinations with more possibilities
+        const combinations = {
+            // Popular combinations
+            '😀🔥': '🤩', '😀❤️': '🥰', '😀🎉': '🥳', '😀⭐': '🤩',
+            '❤️🔥': '💖', '❤️✨': '💕', '❤️🌟': '💖', '❤️🎉': '💝',
+            '🔥💯': '🚀', '🔥⭐': '✨', '🔥🎉': '💥', '🔥💥': '💫',
+            '🐶❤️': '🥰', '🐶🎉': '🎊', '🐶🔥': '🔥', '🐶⭐': '🌟',
+            '🐱❤️': '😻', '🐱🎉': '🎊', '🐱🔥': '😸', '🐱⭐': '✨',
+            '🍕❤️': '😋', '🍕🔥': '🌶️', '🍕⭐': '⭐', '🍕🎉': '🍾',
+            '🎵❤️': '💖', '🎵🔥': '🎸', '🎵⭐': '🌟', '🎵🎉': '🎊',
+            '🌙⭐': '✨', '🌙❤️': '💕', '🌙🔥': '🌟', '🌙🎉': '🎆',
+            '☀️❤️': '🌹', '☀️🔥': '🔥', '☀️⭐': '✨', '☀️🎉': '🌈'
+        };
+
+        const key1 = this.selectedEmoji1 + this.selectedEmoji2;
+        const key2 = this.selectedEmoji2 + this.selectedEmoji1;
+        let result = combinations[key1] || combinations[key2];
+
+        if (!result) {
+            // Generate contextual combination based on emoji categories
+            result = this.generateContextualCombination();
+        }
+
+        const resultElement = document.getElementById('result-emoji');
+        resultElement.innerHTML = result;
+        this.showToast(`${this.selectedEmoji1} + ${this.selectedEmoji2} = ${result}`);
+        
+        // Add animation effect
+        resultElement.classList.add('combination-reveal');
+        setTimeout(() => resultElement.classList.remove('combination-reveal'), 600);
+    }
+
+    generateContextualCombination() {
+        // Analyze emoji types and generate appropriate combinations
+        const emojiCategories = {
+            faces: ['😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '🙃', '😉', '😊'],
+            hearts: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❣️', '💕'],
+            fire: ['🔥', '💥', '⚡', '✨', '🌟', '⭐', '💫', '🌠'],
+            celebration: ['🎉', '🎊', '🥳', '🎈', '🎁', '🏆', '🥇', '👏'],
+            animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼']
+        };
+
+        // Determine categories
+        let category1 = 'other', category2 = 'other';
+        
+        for (const [cat, emojis] of Object.entries(emojiCategories)) {
+            if (emojis.includes(this.selectedEmoji1)) category1 = cat;
+            if (emojis.includes(this.selectedEmoji2)) category2 = cat;
+        }
+
+        // Generate combination based on categories
+        const categoryResults = {
+            'faces-hearts': ['🥰', '😍', '🤩', '😘'],
+            'faces-fire': ['🤩', '😎', '🔥', '✨'],
+            'faces-celebration': ['🥳', '🤩', '🎉', '🎊'],
+            'hearts-fire': ['💖', '💕', '💗', '✨'],
+            'hearts-celebration': ['💝', '💖', '🎁', '🎉'],
+            'fire-celebration': ['🎆', '💥', '🚀', '✨'],
+            'animals-hearts': ['🥰', '💕', '😻', '❤️'],
+            'animals-fire': ['🔥', '⚡', '✨', '🌟']
+        };
+
+        const comboKey = `${category1}-${category2}`;
+        const reverseKey = `${category2}-${category1}`;
+        const possibleResults = categoryResults[comboKey] || categoryResults[reverseKey];
+
+        if (possibleResults) {
+            return possibleResults[Math.floor(Math.random() * possibleResults.length)];
+        }
+
+        // Final fallback - return a random celebratory emoji
+        const fallbacks = ['✨', '🌟', '⭐', '💫', '🎉', '🎊', '💥', '🔥'];
+        return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    }
+
+    addToRecentCombinations(emoji1, emoji2, resultUrl) {
+        let recentCombinations = JSON.parse(localStorage.getItem('recentCombinations') || '[]');
+        
+        const combination = {
+            emoji1,
+            emoji2,
+            result: resultUrl,
+            timestamp: Date.now()
+        };
+        
+        // Add to beginning of array and limit to 10 recent combinations
+        recentCombinations.unshift(combination);
+        recentCombinations = recentCombinations.slice(0, 10);
+        
+        localStorage.setItem('recentCombinations', JSON.stringify(recentCombinations));
+        
+        // Update UI if recent combinations section exists
+        this.updateRecentCombinations();
+    }
+
+    updateRecentCombinations() {
+        const recentSection = document.getElementById('recent-combinations');
+        if (!recentSection) return;
+
+        const recentCombinations = JSON.parse(localStorage.getItem('recentCombinations') || '[]');
+        
+        if (recentCombinations.length === 0) {
+            recentSection.innerHTML = '<p>아직 조합한 이모지가 없습니다.</p>';
+            return;
+        }
+
+        recentSection.innerHTML = recentCombinations.map(combo => `
+            <div class="recent-combo" onclick="window.emojiApp.loadCombination('${combo.emoji1}', '${combo.emoji2}')">
+                <span class="combo-input">${combo.emoji1} + ${combo.emoji2}</span>
+                <span class="combo-arrow">→</span>
+                <span class="combo-result">${combo.result.includes('http') ? 
+                    `<img src="${combo.result}" class="mini-combo-img">` : combo.result}</span>
+            </div>
+        `).join('');
+    }
+
+    loadCombination(emoji1, emoji2) {
+        this.selectedEmoji1 = emoji1;
+        this.selectedEmoji2 = emoji2;
+        document.getElementById('emoji1').innerHTML = emoji1;
+        document.getElementById('emoji1').dataset.emoji = emoji1;
+        document.getElementById('emoji2').innerHTML = emoji2;
+        document.getElementById('emoji2').dataset.emoji = emoji2;
+        
+        // Clear result
+        document.getElementById('result-emoji').innerHTML = '<span class="placeholder">?</span>';
+    }
+
+    clearKitchenSelection() {
+        this.selectedEmoji1 = '';
+        this.selectedEmoji2 = '';
+        document.getElementById('emoji1').innerHTML = '<span class="placeholder">+</span>';
+        document.getElementById('emoji1').dataset.emoji = '';
+        document.getElementById('emoji2').innerHTML = '<span class="placeholder">+</span>';
+        document.getElementById('emoji2').dataset.emoji = '';
+        document.getElementById('result-emoji').innerHTML = '<span class="placeholder">?</span>';
+    }
+
+    switchKitchenTab(tab) {
+        // Update tab buttons
+        document.querySelectorAll('.kitchen-tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-kitchen-tab="${tab}"]`).classList.add('active');
+
+        // Show/hide sections
+        document.querySelectorAll('.kitchen-section').forEach(section => {
+            section.style.display = 'none';
+        });
+
+        switch (tab) {
+            case 'popular':
+                document.getElementById('popular-combinations').style.display = 'block';
+                break;
+            case 'recent':
+                document.getElementById('recent-combinations').style.display = 'block';
+                this.loadRecentCombinations();
+                break;
+            case 'all':
+                document.getElementById('all-emojis').style.display = 'block';
+                this.loadKitchenEmojis();
+                break;
+        }
+    }
+
+    loadRecentCombinations() {
+        const recentCombinations = JSON.parse(localStorage.getItem('recentCombinations') || '[]');
+        const container = document.querySelector('.recent-combinations-list');
+        
+        if (recentCombinations.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">아직 조합한 이모지가 없습니다.<br>위의 추천 조합을 시도해보세요!</p>';
+            return;
+        }
+
+        container.innerHTML = recentCombinations.map(combo => `
+            <div class="recent-combo" onclick="window.emojiApp.loadCombination('${combo.emoji1}', '${combo.emoji2}')">
+                <span class="combo-input">${combo.emoji1} + ${combo.emoji2}</span>
+                <span class="combo-arrow">→</span>
+                <span class="combo-result">${combo.result.includes('http') ? 
+                    `<img src="${combo.result}" class="mini-combo-img" alt="Combined emoji">` : combo.result}</span>
+            </div>
+        `).join('');
     }
 
     switchGalleryTab(tab) {

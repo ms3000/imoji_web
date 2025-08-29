@@ -429,6 +429,172 @@ body {
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
+#clear-selection {
+    padding: 8px 20px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+#clear-selection:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+}
+
+/* Kitchen tabs */
+.kitchen-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 40px 0 30px;
+    flex-wrap: wrap;
+}
+
+.kitchen-tab-btn {
+    padding: 10px 20px;
+    border: 2px solid #e1e5e9;
+    background: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.kitchen-tab-btn.active,
+.kitchen-tab-btn:hover {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border-color: transparent;
+}
+
+/* Kitchen content sections */
+.kitchen-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.kitchen-section h4 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+/* Popular combinations */
+.popular-combo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.combo-suggestion {
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    font-size: 1.1rem;
+}
+
+.combo-suggestion:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #667eea;
+}
+
+/* Recent combinations */
+.recent-combinations-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.recent-combo {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.recent-combo:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.combo-input {
+    flex: 1;
+    font-size: 1.1rem;
+}
+
+.combo-arrow {
+    margin: 0 15px;
+    color: #667eea;
+    font-weight: bold;
+}
+
+.combo-result {
+    font-size: 1.2rem;
+}
+
+.mini-combo-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+}
+
+/* Loading and animation states */
+.loading-spinner {
+    font-size: 2rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.combination-reveal {
+    animation: reveal 0.6s ease-out;
+}
+
+@keyframes reveal {
+    0% {
+        transform: scale(0.5) rotate(-180deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2) rotate(-90deg);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.combined-emoji-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
 .kitchen-emoji-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));

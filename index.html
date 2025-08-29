@@ -196,11 +196,41 @@
                                 <span class="placeholder">?</span>
                             </div>
                             <button id="generate-btn" data-lang="generate-btn">생성</button>
+                            <button id="clear-selection" class="clear-btn">초기화</button>
                         </div>
                     </div>
                     
-                    <div class="kitchen-emoji-grid" id="kitchen-emoji-grid">
-                        <!-- Kitchen emojis will be populated here -->
+                    <div class="kitchen-tabs">
+                        <button class="kitchen-tab-btn active" data-kitchen-tab="popular">인기 조합</button>
+                        <button class="kitchen-tab-btn" data-kitchen-tab="recent">최근 조합</button>
+                        <button class="kitchen-tab-btn" data-kitchen-tab="all">모든 이모지</button>
+                    </div>
+                    
+                    <div class="kitchen-content">
+                        <div class="kitchen-section" id="popular-combinations">
+                            <h4>추천 조합</h4>
+                            <div class="popular-combo-grid">
+                                <div class="combo-suggestion" data-combo="😀,🔥">😀 + 🔥</div>
+                                <div class="combo-suggestion" data-combo="❤️,✨">❤️ + ✨</div>
+                                <div class="combo-suggestion" data-combo="🐶,🎉">🐶 + 🎉</div>
+                                <div class="combo-suggestion" data-combo="🍕,❤️">🍕 + ❤️</div>
+                                <div class="combo-suggestion" data-combo="🔥,💯">🔥 + 💯</div>
+                                <div class="combo-suggestion" data-combo="🌙,⭐">🌙 + ⭐</div>
+                            </div>
+                        </div>
+                        
+                        <div class="kitchen-section" id="recent-combinations" style="display:none;">
+                            <h4>최근 조합</h4>
+                            <div class="recent-combinations-list">
+                                <!-- Recent combinations will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="kitchen-section" id="all-emojis" style="display:none;">
+                            <div class="kitchen-emoji-grid" id="kitchen-emoji-grid">
+                                <!-- Kitchen emojis will be populated here -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
