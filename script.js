@@ -457,11 +457,14 @@ class EmojiCopyApp {
                 // Add to recent combinations
                 this.addToRecentCombinations(this.selectedEmoji1, this.selectedEmoji2, combination.url);
             } else {
+                // Show informative message about unsupported combination
+                this.showToast(`${this.selectedEmoji1} + ${this.selectedEmoji2} 조합을 찾을 수 없어서 유사한 조합을 만들어드려요! 💡`, 'warning');
                 // Fallback to predefined combinations
                 this.generateFallbackCombination();
             }
         } catch (error) {
             console.warn('Emoji combination failed, using fallback:', error);
+            this.showToast(`네트워크 문제로 인해 대체 조합을 생성합니다 🔄`, 'info');
             this.generateFallbackCombination();
         } finally {
             generateBtn.disabled = false;
@@ -477,15 +480,34 @@ class EmojiCopyApp {
     }
 
     async fetchEmojiCombination(code1, code2) {
-        // Try multiple combination approaches
+        // Use modern Emoji Kitchen API instead of hardcoded dated URLs
         const attempts = [
-            `https://www.gstatic.com/android/keyboard/emojikitchen/20220203/u${code1.toLowerCase()}/u${code1.toLowerCase()}_u${code2.toLowerCase()}.png`,
-            `https://www.gstatic.com/android/keyboard/emojikitchen/20220203/u${code2.toLowerCase()}/u${code2.toLowerCase()}_u${code1.toLowerCase()}.png`,
-            `https://www.gstatic.com/android/keyboard/emojikitchen/20220406/u${code1.toLowerCase()}/u${code1.toLowerCase()}_u${code2.toLowerCase()}.png`,
-            `https://www.gstatic.com/android/keyboard/emojikitchen/20220406/u${code2.toLowerCase()}/u${code2.toLowerCase()}_u${code1.toLowerCase()}.png`
+            // Primary API - use codepoints
+            `https://emojik.vercel.app/s/${code1.toLowerCase()}_${code2.toLowerCase()}?size=128`,
+            // Fallback - try reversed order
+            `https://emojik.vercel.app/s/${code2.toLowerCase()}_${code1.toLowerCase()}?size=128`
         ];
 
         for (const url of attempts) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                if (response.ok) {
+                    return { url, valid: true };
+                }
+            } catch (e) {
+                // Continue to next attempt
+            }
+        }
+
+        // Final fallback - try with actual emoji characters
+        const emoji1 = String.fromCodePoint(parseInt(code1, 16));
+        const emoji2 = String.fromCodePoint(parseInt(code2, 16));
+        const emojiAttempts = [
+            `https://emojik.vercel.app/s/${emoji1}_${emoji2}?size=128`,
+            `https://emojik.vercel.app/s/${emoji2}_${emoji1}?size=128`
+        ];
+
+        for (const url of emojiAttempts) {
             try {
                 const response = await fetch(url, { method: 'HEAD' });
                 if (response.ok) {
