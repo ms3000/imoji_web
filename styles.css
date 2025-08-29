@@ -429,6 +429,39 @@ body {
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
+.result-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.copy-btn {
+    padding: 8px 12px;
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 45px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copy-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+}
+
+.copy-btn:active {
+    transform: translateY(0) scale(0.95);
+}
+
 #clear-selection {
     padding: 8px 20px;
     background: #6c757d;

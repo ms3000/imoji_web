@@ -7,6 +7,8 @@ class EmojiCopyApp {
         this.recentEmojis = JSON.parse(localStorage.getItem('recentEmojis')) || [];
         this.selectedEmoji1 = '';
         this.selectedEmoji2 = '';
+        this.currentResult = null;
+        this.boundCopyResult = null;
         
         this.emojiData = this.initializeEmojiData();
         this.init();
@@ -454,6 +456,9 @@ class EmojiCopyApp {
                 resultElement.innerHTML = `<img src="${combination.url}" alt="Combined emoji" class="combined-emoji-img">`;
                 this.showToast(`${this.selectedEmoji1} + ${this.selectedEmoji2} = 조합 완성! 🎉`);
                 
+                // Show copy button and store result for copying
+                this.showCopyButton(combination.url);
+                
                 // Add to recent combinations
                 this.addToRecentCombinations(this.selectedEmoji1, this.selectedEmoji2, combination.url);
             } else {
@@ -548,6 +553,9 @@ class EmojiCopyApp {
         const resultElement = document.getElementById('result-emoji');
         resultElement.innerHTML = result;
         this.showToast(`${this.selectedEmoji1} + ${this.selectedEmoji2} = ${result}`);
+        
+        // Show copy button for fallback result
+        this.showCopyButton(null, result);
         
         // Add animation effect
         resultElement.classList.add('combination-reveal');
@@ -648,6 +656,9 @@ class EmojiCopyApp {
         
         // Clear result
         document.getElementById('result-emoji').innerHTML = '<span class="placeholder">?</span>';
+        
+        // Hide copy button
+        this.hideCopyButton();
     }
 
     clearKitchenSelection() {
@@ -658,6 +669,9 @@ class EmojiCopyApp {
         document.getElementById('emoji2').innerHTML = '<span class="placeholder">+</span>';
         document.getElementById('emoji2').dataset.emoji = '';
         document.getElementById('result-emoji').innerHTML = '<span class="placeholder">?</span>';
+        
+        // Hide copy button
+        this.hideCopyButton();
     }
 
     switchKitchenTab(tab) {
@@ -1002,6 +1016,138 @@ class EmojiCopyApp {
 
     closeModal() {
         document.getElementById('game-modal').style.display = 'none';
+    }
+
+    showCopyButton(imageUrl = null, emoji = null) {
+        const copyButton = document.getElementById('copy-result-btn');
+        if (!copyButton) {
+            console.error('Copy button not found');
+            return;
+        }
+        
+        copyButton.style.display = 'inline-block';
+        
+        // Store the current result for copying
+        this.currentResult = { imageUrl, emoji };
+        
+        // Remove existing event listener and add new one
+        if (this.boundCopyResult) {
+            copyButton.removeEventListener('click', this.boundCopyResult);
+        }
+        this.boundCopyResult = () => this.copyResult();
+        copyButton.addEventListener('click', this.boundCopyResult);
+    }
+
+    hideCopyButton() {
+        const copyButton = document.getElementById('copy-result-btn');
+        if (copyButton) {
+            copyButton.style.display = 'none';
+        }
+        this.currentResult = null;
+    }
+
+    async copyResult() {
+        console.log('copyResult called with:', this.currentResult);
+        
+        if (!this.currentResult) {
+            console.warn('No result to copy');
+            this.showToast('복사할 결과가 없습니다 ❌', 'error');
+            return;
+        }
+
+        try {
+            // Check if clipboard API is available
+            if (!navigator.clipboard) {
+                console.warn('Clipboard API not available, using fallback');
+                this.fallbackCopy();
+                return;
+            }
+
+            // Check if we're in a secure context (required for clipboard API)
+            if (!window.isSecureContext) {
+                console.warn('Not in secure context, clipboard API may not work');
+                this.fallbackCopy();
+                return;
+            }
+
+            if (this.currentResult.imageUrl) {
+                // For image results, try to copy image first, fallback to URL
+                try {
+                    await this.copyImageAsBlob(this.currentResult.imageUrl);
+                    this.showToast('이미지가 복사되었습니다! 📋', 'success');
+                } catch (imageError) {
+                    console.warn('Image copy failed, copying URL instead:', imageError);
+                    await navigator.clipboard.writeText(this.currentResult.imageUrl);
+                    this.showToast('이미지 URL이 복사되었습니다! 📋', 'success');
+                }
+            } else if (this.currentResult.emoji) {
+                // For emoji results, copy the emoji text
+                await navigator.clipboard.writeText(this.currentResult.emoji);
+                this.showToast(`${this.currentResult.emoji} 복사 완료! 📋`, 'success');
+            }
+            
+            // Visual feedback on copy button
+            this.animateCopyButton();
+            
+        } catch (error) {
+            console.warn('Clipboard API failed:', error);
+            // Fallback for older browsers or permission issues
+            this.fallbackCopy();
+        }
+    }
+
+    async copyImageAsBlob(imageUrl) {
+        try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            
+            if (navigator.clipboard && navigator.clipboard.write) {
+                const clipboardItem = new ClipboardItem({ [blob.type]: blob });
+                await navigator.clipboard.write([clipboardItem]);
+            } else {
+                // Fallback: copy the URL instead
+                await navigator.clipboard.writeText(imageUrl);
+            }
+        } catch (error) {
+            // If image copy fails, copy the URL instead
+            await navigator.clipboard.writeText(imageUrl);
+        }
+    }
+
+    fallbackCopy() {
+        const textToCopy = this.currentResult.emoji || this.currentResult.imageUrl;
+        if (!textToCopy) return;
+
+        // Create temporary textarea for copy
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy;
+        document.body.appendChild(textarea);
+        textarea.select();
+        
+        try {
+            document.execCommand('copy');
+            this.showToast('복사 완료! 📋', 'success');
+            this.animateCopyButton();
+        } catch (error) {
+            this.showToast('복사에 실패했습니다 ❌', 'error');
+        } finally {
+            document.body.removeChild(textarea);
+        }
+    }
+
+    animateCopyButton() {
+        const copyButton = document.getElementById('copy-result-btn');
+        if (!copyButton) return;
+        
+        copyButton.style.transform = 'scale(1.2)';
+        copyButton.style.background = '#4CAF50';
+        
+        setTimeout(() => {
+            if (copyButton) {
+                copyButton.style.transform = 'scale(1)';
+                copyButton.style.background = '';
+            }
+        }, 200);
     }
 }
 
